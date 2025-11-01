@@ -1,0 +1,109 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Result
+{
+
+    /*
+     * Complete the 'boardCutting' function below.
+     *
+     * The function is expected to return an INTEGER.
+     * The function accepts following parameters:
+     *  1. INTEGER_ARRAY cost_y
+     *  2. INTEGER_ARRAY cost_x
+     */
+
+    public static int boardCutting(List<int> cost_y, List<int> cost_x)
+    {
+         const long MOD = 1000000007;
+
+        // Sort both cost lists in descending order
+        cost_y.Sort();
+        cost_y.Reverse();
+        cost_x.Sort();
+        cost_x.Reverse();
+
+        int i = 0, j = 0;
+        long horizontalPieces = 1; // number of horizontal segments
+        long verticalPieces = 1;   // number of vertical segments
+        long totalCost = 0;
+
+        while (i < cost_y.Count && j < cost_x.Count)
+        {
+            if (cost_y[i] >= cost_x[j])
+            {
+                totalCost += (cost_y[i] * verticalPieces) % MOD;
+                horizontalPieces++;
+                i++;
+            }
+            else
+            {
+                totalCost += (cost_x[j] * horizontalPieces) % MOD;
+                verticalPieces++;
+                j++;
+            }
+
+            totalCost %= MOD;
+        }
+
+        // Handle remaining horizontal cuts
+        while (i < cost_y.Count)
+        {
+            totalCost += (cost_y[i] * verticalPieces) % MOD;
+            totalCost %= MOD;
+            i++;
+             }
+
+        // Handle remaining vertical cuts
+        while (j < cost_x.Count)
+        {
+            totalCost += (cost_x[j] * horizontalPieces) % MOD;
+            totalCost %= MOD;
+            j++;
+        }
+
+        return (int)(totalCost % MOD);
+    }
+
+}
+
+class Solution
+{
+    public static void Main(string[] args)
+    {
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+
+        int q = Convert.ToInt32(Console.ReadLine().Trim());
+
+        for (int qItr = 0; qItr < q; qItr++)
+        {
+            string[] firstMultipleInput = Console.ReadLine().TrimEnd().Split(' ');
+
+            int m = Convert.ToInt32(firstMultipleInput[0]);
+
+            int n = Convert.ToInt32(firstMultipleInput[1]);
+
+            List<int> cost_y = Console.ReadLine().TrimEnd().Split(' ').ToList().Select(cost_yTemp => Convert.ToInt32(cost_yTemp)).ToList();
+
+            List<int> cost_x = Console.ReadLine().TrimEnd().Split(' ').ToList().Select(cost_xTemp => Convert.ToInt32(cost_xTemp)).ToList();
+
+            int result = Result.boardCutting(cost_y, cost_x);
+
+            textWriter.WriteLine(result);
+        }
+
+        textWriter.Flush();
+        textWriter.Close();
+    }
+}
