@@ -1,1 +1,1 @@
-# Cutting-Boards
+# Cutting-Boards This C# program calculates the **minimum total cost to cut a rectangular board** into smaller pieces based on given horizontal and vertical cut costs. It sorts the costs in descending order and greedily applies the most expensive cuts first, adjusting for how many pieces each cut affects and keeping results modulo (10^9 + 7).
